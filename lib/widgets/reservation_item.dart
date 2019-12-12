@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_kiosk/screens/reservation_details_screen.dart';
 import '../providers/reservations.dart' as ord;
 
 class ReservationItemWidget extends StatefulWidget {
@@ -14,76 +15,81 @@ class ReservationItemWidget extends StatefulWidget {
 class _ReservationItemWidgetState extends State<ReservationItemWidget> {
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      elevation: 4,
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 5),
-        padding: EdgeInsets.symmetric(vertical: 7, horizontal: 10),
-        child: Column(
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Text(
-                    '${widget.reservation.kioskName}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: (){
+        Navigator.of(context).pushNamed(ReservationDetailsScreen.routeName, arguments: widget.reservation.id);
+      },
+      child: Card(
+        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        elevation: 4,
+        child: Container(
+          margin: EdgeInsets.symmetric(vertical: 5),
+          padding: EdgeInsets.symmetric(vertical: 7, horizontal: 10),
+          child: Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      '${widget.reservation.kioskName}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                Icon(
-                  widget.reservation.icon,
-                  color: widget.reservation.color,
-                  size: 24.0,
-                ),
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        '${widget.reservation.price} RSD',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        '${widget.reservation.paymentMethod.toUpperCase()}',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text('${widget.reservation.timeLastChange}')
-                    ],
+                  Icon(
+                    widget.reservation.icon,
+                    color: widget.reservation.color,
+                    size: 24.0,
                   ),
-                ),
-                Flexible(
-                  fit: FlexFit.tight,
-                  child: Text(
-                    '${widget.reservation.statusMessage}',
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontStyle: FontStyle.italic,
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          '${widget.reservation.price} RSD',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '${widget.reservation.paymentMethod.toUpperCase()}',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text('${widget.reservation.timeLastChange}')
+                      ],
                     ),
                   ),
-                ),
-                widget.reservation.reservationStatusId == 3
-                    ? IconForResending(widget.reservation.id)
-                    : Text('')
-              ],
-            ),
-          ],
+                  Flexible(
+                    fit: FlexFit.tight,
+                    child: Text(
+                      '${widget.reservation.statusMessage}',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+                  widget.reservation.reservationStatusId == 3
+                      ? IconForResending(widget.reservation.id)
+                      : Text('')
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

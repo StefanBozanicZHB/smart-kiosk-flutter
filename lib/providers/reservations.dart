@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:smart_kiosk/helpers/additional_%20functions.dart';
+import 'package:smart_kiosk/helpers/http_exception.dart';
+import 'package:smart_kiosk/models/Product.dart';
 import 'package:smart_kiosk/models/ResponseReservation.dart';
+import 'package:smart_kiosk/models/ResponseReservationDetails.dart';
 import 'package:timezone/standalone.dart';
 import 'package:timezone/timezone.dart';
 import 'package:device_id/device_id.dart';
@@ -34,8 +37,9 @@ class ReservatioItem {
   });
 }
 
-class Reservations with ChangeNotifier  {
+class Reservations with ChangeNotifier {
   List<ReservatioItem> _reservations = [];
+  ResponseReservationDetails reservationDetails;
   var userId;
 
 //  Reservations(this._reservations);
@@ -45,7 +49,6 @@ class Reservations with ChangeNotifier  {
   }
 
   Future<void> fetchAndSetReservation() async {
-
     userId = await AdditionalFunctions().getDeviceId();
 
     final url = 'http://app.smart-shop.rs/api/orders_by_device/$userId';
@@ -57,9 +60,7 @@ class Reservations with ChangeNotifier  {
         return;
       }
       extractedData.forEach((orderData) {
-//        print('');
-//        print(orderData);
-//        print('');
+        print(orderData);
 
         var color = Colors.green;
         var icon = Icons.check;
@@ -123,7 +124,8 @@ class Reservations with ChangeNotifier  {
       });
 
       _reservations = loadedOrders.toList();
-      notifyListeners();
+
+//      notifyListeners();
     } catch (error) {
       print(error);
       throw (error);
@@ -144,17 +146,16 @@ class Reservations with ChangeNotifier  {
 
     var responseReservation = ResponseReservation(
       success: extractedData['success'],
-//      success: true,
       idReservation: extractedData['id_reservation'],
       orderCode: extractedData['order_code'],
-//      orderCode: 123,
       errorCode: extractedData['error_code'],
     );
 
     print(reservationId);
 
-    if(extractedData['success']){
-      final reservationIndex = _reservations.indexWhere((reserv) => reserv.id == reservationId);
+    if (extractedData['success']) {
+      final reservationIndex =
+          _reservations.indexWhere((reserv) => reserv.id == reservationId);
       _reservations[reservationIndex].reservationStatusId = 1;
       notifyListeners();
     }
@@ -166,16 +167,101 @@ class Reservations with ChangeNotifier  {
   Future<void> fetchAndSetReservationDetails(reservationId) async {
     final url = 'http://app.smart-shop.rs/api/orders/$reservationId';
 
-//    try{
-//      final response = await http.get(url);
-//      final extractedData = json.decode(response.body);
-//
-//      if(extractedData == null){
-//        return;
-//      }
-//
-//
-//
-//    }
+    try {
+      final response = await http.get(url);
+      final extractedData = json.decode(response.body);
+
+      if (extractedData == null) {
+        return null;
+      }
+
+      String message;
+      switch (extractedData['status_order_id']) {
+        case 1:
+          message = 'Reservation received';
+          break;
+        case 2:
+          message = 'Reservation successfully forwarded to kiosk';
+          break;
+        case 3:
+          message = 'Reservation unsuccessfully forwarded to kiosk';
+          break;
+        case 4:
+          message =
+              'Reservation successfully forwarded to kiosk, but kiosk could not reserve products';
+          break;
+        case 5:
+          message = 'Buying successful';
+          break;
+        case 2:
+          message = 'Buying unsuccessful';
+          break;
+        case 7:
+          message = 'Reservation expired';
+          break;
+        case 8:
+          message = 'Reservation canceled';
+          break;
+      }
+
+      final ResponseReservationDetails loadedReservationDetails =
+          ResponseReservationDetails(
+        id: extractedData['id'],
+        kioskName: extractedData['kiosk_name'],
+        kioskAddressStreet: extractedData['kiosk_address_street'],
+        kioskAddressNumber: extractedData['kiosk_address_number'],
+        paymentMethod: extractedData['payment_method'],
+        orderCode: extractedData['order_code'],
+        statusOrder: message,
+        timeLastChange: convertDateInLocal(extractedData['time_last_change']),
+        price: extractedData['price'],
+        productList: (extractedData['product_list'] as List<dynamic>)
+            .map((item) => Product(
+                  id: item['id'],
+                  description: item['description'],
+                  name: item['name'],
+                  quantity: item['quantity'],
+                  ingredients: item['ingredients'],
+                  pictureUrl: 'http://app.smart-shop.rs/' + item['picture_url'],
+                  unitPrice: item['unit_price'],
+                ))
+            .toList(),
+      );
+
+      reservationDetails = loadedReservationDetails;
+      notifyListeners();
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> deleteReservation(reservationId) async {
+    final url = 'http://app.smart-shop.rs/api/orders/$reservationId';
+
+    try {
+      final response = await http.delete(url);
+      final extractedData = json.decode(response.body);
+
+      if (extractedData == null) {
+        throw HttpException('Could not delete reservation.');
+      }
+
+      if(extractedData['success'] == 'false'){
+        print('12');
+        throw HttpException(extractedData['description']);
+      }
+      print('23');
+
+      if (response.statusCode >= 400) {
+        throw HttpException('Could not delete reservation.');
+      }
+
+//      final _reservationIndex = _reservations.indexWhere((reservationItem) => reservationItem.id == reservationId);
+//      _reservations.removeAt(_reservationIndex);
+//      notifyListeners();
+
+    } catch (error) {
+      throw error;
+    }
   }
 }

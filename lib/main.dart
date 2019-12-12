@@ -5,6 +5,7 @@ import 'package:smart_kiosk/providers/reservations.dart';
 import 'package:smart_kiosk/screens/cart_screen.dart';
 import 'package:smart_kiosk/screens/first_screen.dart';
 import 'package:smart_kiosk/screens/main_screen.dart';
+import 'package:smart_kiosk/screens/reservation_details_screen.dart';
 import 'package:smart_kiosk/screens/reservation_screen.dart'; // provider: ^3.0.0
 
 void main() => runApp(MyApp());
@@ -65,7 +66,10 @@ class _MyAppState extends State<MyApp> {
                 fontSize: 12,
                 fontFamily: 'RobotoCondensed',
                 fontWeight: FontWeight.bold,
-              )),
+              ),
+            headline: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,),
+            overline: TextStyle(fontSize: 22,),
+          ),
           pageTransitionsTheme: PageTransitionsTheme(
             builders: {
               TargetPlatform.android: CustomPageTransitionBuilder(),
@@ -77,6 +81,7 @@ class _MyAppState extends State<MyApp> {
         routes: {
           CartScreen.routeName: (ctx) => CartScreen(),
           ReservationScreen.routeName: (ctx) => ReservationScreen(),
+          ReservationDetailsScreen.routeName: (ctx) => ReservationDetailsScreen(),
         },
       ),
     );
