@@ -9,20 +9,17 @@ import 'package:smart_kiosk/helpers/http_exception.dart';
 import 'package:smart_kiosk/models/Product.dart';
 import 'package:smart_kiosk/models/ResponseReservation.dart';
 import 'package:smart_kiosk/models/ResponseReservationDetails.dart';
-import 'package:timezone/standalone.dart';
-import 'package:timezone/timezone.dart';
-import 'package:device_id/device_id.dart';
 
 class ReservatioItem {
-  int id;
-  String kioskName;
-  String paymentMethod;
+  final int id;
+  final String kioskName;
+  final String paymentMethod;
   int reservationStatusId;
-  String timeLastChange;
-  int price;
-  var color;
-  var icon;
-  String statusMessage;
+  final String timeLastChange;
+  final int price;
+  final color;
+  final icon;
+  final String statusMessage;
 
   ReservatioItem({
     this.id,
@@ -42,8 +39,6 @@ class Reservations with ChangeNotifier {
   ResponseReservationDetails reservationDetails;
   var userId;
 
-//  Reservations(this._reservations);
-
   List<ReservatioItem> get reservation {
     return [..._reservations];
   }
@@ -54,19 +49,19 @@ class Reservations with ChangeNotifier {
     final url = 'http://app.smart-shop.rs/api/orders_by_device/$userId';
     try {
       final response = await http.get(url);
-      final List<ReservatioItem> loadedOrders = [];
+      final List<ReservatioItem> _loadedReservation = [];
       final extractedData = json.decode(response.body);
       if (extractedData == null) {
         return;
       }
-      extractedData.forEach((orderData) {
-        print(orderData);
+      extractedData.forEach((reservationData) {
+        print(reservationData);
 
         var color = Colors.green;
         var icon = Icons.check;
         String message;
 
-        switch (orderData['status_order_id']) {
+        switch (reservationData['status_order_id']) {
           case 1:
             color = Colors.green;
             icon = Icons.alarm;
@@ -110,20 +105,20 @@ class Reservations with ChangeNotifier {
             break;
         }
 
-        loadedOrders.add(ReservatioItem(
-          id: orderData['id'],
-          kioskName: orderData['kiosk_name'],
-          paymentMethod: orderData['payment_method'],
-          reservationStatusId: orderData['status_order_id'],
-          timeLastChange: convertDateInLocal(orderData['time_last_change']),
-          price: orderData['price'],
+        _loadedReservation.add(ReservatioItem(
+          id: reservationData['id'],
+          kioskName: reservationData['kiosk_name'],
+          paymentMethod: reservationData['payment_method'],
+          reservationStatusId: reservationData['status_order_id'],
+          timeLastChange: convertDateInLocal(reservationData['time_last_change']),
+          price: reservationData['price'],
           color: color,
           icon: icon,
           statusMessage: message,
         ));
       });
 
-      _reservations = loadedOrders.toList();
+      _reservations = _loadedReservation.toList();
 
 //      notifyListeners();
     } catch (error) {

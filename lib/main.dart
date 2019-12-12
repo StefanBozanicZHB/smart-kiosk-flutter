@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_kiosk/helpers/custom_route.dart';
+import 'package:smart_kiosk/providers/kiosks.dart';
 import 'package:smart_kiosk/providers/reservations.dart';
 import 'package:smart_kiosk/screens/cart_screen.dart';
 import 'package:smart_kiosk/screens/first_screen.dart';
+import 'package:smart_kiosk/screens/kiosk_screen.dart';
 import 'package:smart_kiosk/screens/main_screen.dart';
 import 'package:smart_kiosk/screens/reservation_details_screen.dart';
-import 'package:smart_kiosk/screens/reservation_screen.dart'; // provider: ^3.0.0
+import 'package:smart_kiosk/screens/reservation_screen.dart';
+import 'package:smart_kiosk/widgets/splash_screen.dart'; // provider: ^3.0.0
 
 void main() => runApp(MyApp());
 
@@ -31,7 +34,6 @@ class _MyAppState extends State<MyApp> {
       900: Color(0xFF181861),
     },
   );
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -39,9 +41,9 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider.value(
           value: Reservations(),
         ),
-//        ChangeNotifierProvider.value(
-//          value: ReservatioItem(),
-//        ),
+        ChangeNotifierProvider.value(
+          value: Kiosks(),
+        ),
 //        ChangeNotifierProxyProvider<Auth, Products>(
 //          builder: (ctx, auth, previousProducts) => Products(
 //            auth.token,
@@ -82,6 +84,7 @@ class _MyAppState extends State<MyApp> {
           CartScreen.routeName: (ctx) => CartScreen(),
           ReservationScreen.routeName: (ctx) => ReservationScreen(),
           ReservationDetailsScreen.routeName: (ctx) => ReservationDetailsScreen(),
+          KioskScreen.routeName: (ctx) => KioskScreen(),
         },
       ),
     );

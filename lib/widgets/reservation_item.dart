@@ -20,7 +20,7 @@ class _ReservationItemWidgetState extends State<ReservationItemWidget> {
         Navigator.of(context).pushNamed(ReservationDetailsScreen.routeName, arguments: widget.reservation.id);
       },
       child: Card(
-        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:smart_kiosk/providers/kiosks.dart';
 import 'package:smart_kiosk/screens/cart_screen.dart';
 import 'package:smart_kiosk/screens/main_screen.dart';
 import 'package:smart_kiosk/screens/reservation_screen.dart';
@@ -30,6 +32,12 @@ class _FirstScreenState extends State<FirstScreen> {
     setState(() {
       _selectedPageIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<Kiosks>(context, listen: false).fetchAndSetFavoriteKiosks();
   }
 
   @override
