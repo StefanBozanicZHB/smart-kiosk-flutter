@@ -37,7 +37,7 @@ class _FirstScreenState extends State<FirstScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<Kiosks>(context, listen: false).fetchAndSetFavoriteKiosks();
+//    Provider.of<Kiosks>(context, listen: false).fetchAndSetFavoriteKiosks();
   }
 
   @override

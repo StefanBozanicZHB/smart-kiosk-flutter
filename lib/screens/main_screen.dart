@@ -11,11 +11,11 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
+    Provider.of<Kiosks>(context, listen: false).fetchAndSetFavoriteKiosks();
     return GridView.count(
       crossAxisCount: 2,
       children: List.generate(4, (index) {
         return ItemMenu(index);
-//            return ItemMainMenu(index);
       }),
     );
   }
@@ -34,6 +34,8 @@ class _ItemMenuState extends State<ItemMenu> {
   String title;
   String image;
   String nextHop;
+  typeOfMainSceen idOfScreen;
+  String titleOfScreen;
 
   @override
   void initState() {
@@ -43,21 +45,29 @@ class _ItemMenuState extends State<ItemMenu> {
         title = 'Nearest kiosks';
         image = 'assets/images/map_and_marker.png';
         nextHop = KioskScreen.routeName;
+        idOfScreen = typeOfMainSceen.byLocation;
+        titleOfScreen = 'Nearest kiosks';
         break;
       case 1:
         title = 'Search kiosks by name or number';
         image = 'assets/images/marker_with_number.jpg';
         nextHop = KioskScreen.routeName;
+        idOfScreen = typeOfMainSceen.byName;
+        titleOfScreen = 'Search kiosks by name or number';
         break;
       case 2:
         title = 'Search kiosk by street name';
         image = 'assets/images/street.png';
         nextHop = KioskScreen.routeName;
+        idOfScreen = typeOfMainSceen.byStreet;
+        titleOfScreen = 'Search kiosk by street name';
         break;
       case 3:
         title = 'Favourite kiosks';
         image = 'assets/images/multiple_markers.png';
         nextHop = KioskScreen.routeName;
+        idOfScreen = typeOfMainSceen.byFavorite;
+        titleOfScreen = 'Search favorite kiosk';
         break;
     }
   }
@@ -68,7 +78,10 @@ class _ItemMenuState extends State<ItemMenu> {
       padding: const EdgeInsets.all(5),
       child: GestureDetector(
         onTap: () {
-          Navigator.of(context).pushNamed(nextHop);
+          Navigator.of(context).pushNamed(nextHop, arguments: {
+            'type': idOfScreen,
+            'title': titleOfScreen,
+          },);
         },
         child: Card(
           shape: RoundedRectangleBorder(

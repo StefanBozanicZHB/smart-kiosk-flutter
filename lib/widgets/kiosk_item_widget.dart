@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:smart_kiosk/providers/kiosks.dart';
 
 class KioskItemWidget extends StatelessWidget {
@@ -21,18 +22,42 @@ class KioskItemWidget extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 7, horizontal: 10),
           child: Row(
             children: <Widget>[
+              Container(
+                width: 60,
+                height: 60,
+                margin: EdgeInsets.only(right: 10),
+                child: Image.asset(
+                  'assets/images/map_and_marker.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
               Expanded(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(kiosk.name),
+                    Text(
+                      kiosk.name,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     Text('${kiosk.streetName}, ${kiosk.streetNumber}'),
                     Text('#${kiosk.id}'),
                   ],
                 ),
               ),
-              kiosk.isFavourite
-                  ? IconButton(icon: Icon(Icons.favorite), onPressed: () {})
-                  : IconButton(icon: Icon(Icons.favorite_border), onPressed: () {})
+              IconButton(
+                  icon: Icon(
+                    kiosk.isFavourite ? Icons.favorite : Icons.favorite_border,
+                    color: Colors.red,
+                  ),
+                  onPressed: () async {
+                    try{
+                      await Provider.of<Kiosks>(context, listen: false).changeFavorite(!kiosk.isFavourite, kiosk.id);
+                    } catch (error){
+                      final snackBar = SnackBar(content: const Text('Check internet connection!'));
+                      Scaffold.of(context).showSnackBar(snackBar);
+                    }
+                    print(kiosk.isFavourite);
+                  })
             ],
           ),
         ),
