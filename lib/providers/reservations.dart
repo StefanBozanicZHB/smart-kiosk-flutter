@@ -217,7 +217,7 @@ class Reservations with ChangeNotifier {
                   name: item['name'],
                   quantity: item['quantity'],
                   ingredients: item['ingredients'],
-                  pictureUrl: 'http://app.smart-shop.rs/' + item['picture_url'],
+                  pictureUrl: AdditionalFunctions.IMAGE_URL_PREF + item['picture_url'],
                   unitPrice: item['unit_price'],
                 ))
             .toList(),

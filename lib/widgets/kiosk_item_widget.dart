@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_kiosk/providers/kiosks.dart';
+import 'package:smart_kiosk/screens/products_list_screen.dart';
 
 class KioskItemWidget extends StatelessWidget {
   final KioskItem kiosk;
@@ -10,7 +11,9 @@ class KioskItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context).pushNamed(ProductsListScreen.routeName, arguments: kiosk);
+      },
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         shape: RoundedRectangleBorder(

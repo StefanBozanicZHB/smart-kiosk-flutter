@@ -5,6 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:smart_kiosk/helpers/additional_%20functions.dart';
 
+enum typeOfMainSceen {
+  byLocation,
+  byName,
+  byStreet,
+  byFavorite,
+}
+
 class KioskItem {
   int id;
   String name;
@@ -31,13 +38,6 @@ class KioskItem {
     this.isFavourite,
     this.distanceBetweenKioskAndCurrentLocation,
   });
-}
-
-enum typeOfMainSceen {
-  byLocation,
-  byName,
-  byStreet,
-  byFavorite,
 }
 
 class Kiosks with ChangeNotifier {
