@@ -38,6 +38,14 @@ class Products with ChangeNotifier {
     return [..._products];
   }
 
+  List<ProductItem> get productsCash{
+    return [..._products.where((product)=> product.paymentMethod == typeOfPaymentMethod.cash)];
+  }
+
+  List<ProductItem> get productsCard{
+    return [..._products.where((product)=> product.paymentMethod == typeOfPaymentMethod.card)];
+  }
+
   Future<void> fetchAndSetProducts(kioskId) async {
     final url = 'http://app.smart-shop.rs/api/kiosks/$kioskId/products/all';
 
