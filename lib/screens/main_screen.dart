@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_kiosk/helpers/additional_%20functions.dart';
+import 'package:smart_kiosk/models/kiosk.dart';
 import 'package:smart_kiosk/providers/kiosks.dart';
 import 'package:smart_kiosk/screens/kiosk_screen.dart';
 
@@ -22,52 +24,52 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 class ItemMenu extends StatefulWidget {
-  final index;
+  final _index;
 
-  ItemMenu(this.index);
+  ItemMenu(this._index);
 
   @override
   _ItemMenuState createState() => _ItemMenuState();
 }
 
 class _ItemMenuState extends State<ItemMenu> {
-  String title;
-  String image;
-  String nextHop;
-  typeOfMainSceen idOfScreen;
-  String titleOfScreen;
+  String _title;
+  String _image;
+  String _nextHop;
+  MainMenu _typeOfMainScreen;
+  String _titleOfScreen;
 
   @override
   void initState() {
     super.initState();
-    switch (widget.index) {
+    switch (widget._index) {
       case 0:
-        title = 'Nearest kiosks';
-        image = 'assets/images/map_and_marker.png';
-        nextHop = KioskScreen.routeName;
-        idOfScreen = typeOfMainSceen.byLocation;
-        titleOfScreen = 'Nearest kiosks';
+        _title = 'Nearest kiosks';
+        _image = 'assets/images/map_and_marker.png';
+        _nextHop = KioskScreen.routeName;
+        _typeOfMainScreen = MainMenu.byLocation;
+        _titleOfScreen = 'Nearest kiosks';
         break;
       case 1:
-        title = 'Search kiosks by name or number';
-        image = 'assets/images/marker_with_number.jpg';
-        nextHop = KioskScreen.routeName;
-        idOfScreen = typeOfMainSceen.byName;
-        titleOfScreen = 'Search kiosks by name or number';
+        _title = 'Search kiosks by name or number';
+        _image = 'assets/images/marker_with_number.jpg';
+        _nextHop = KioskScreen.routeName;
+        _typeOfMainScreen = MainMenu.byName;
+        _titleOfScreen = 'Search kiosks by name or number';
         break;
       case 2:
-        title = 'Search kiosk by street name';
-        image = 'assets/images/street.png';
-        nextHop = KioskScreen.routeName;
-        idOfScreen = typeOfMainSceen.byStreet;
-        titleOfScreen = 'Search kiosk by street name';
+        _title = 'Search kiosk by street name';
+        _image = 'assets/images/street.png';
+        _nextHop = KioskScreen.routeName;
+        _typeOfMainScreen = MainMenu.byStreet;
+        _titleOfScreen = 'Search kiosk by street name';
         break;
       case 3:
-        title = 'Favourite kiosks';
-        image = 'assets/images/multiple_markers.png';
-        nextHop = KioskScreen.routeName;
-        idOfScreen = typeOfMainSceen.byFavorite;
-        titleOfScreen = 'Search favorite kiosk';
+        _title = 'Favourite kiosks';
+        _image = 'assets/images/multiple_markers.png';
+        _nextHop = KioskScreen.routeName;
+        _typeOfMainScreen = MainMenu.byFavorite;
+        _titleOfScreen = 'Search favorite kiosk';
         break;
     }
   }
@@ -78,9 +80,9 @@ class _ItemMenuState extends State<ItemMenu> {
       padding: const EdgeInsets.all(5),
       child: GestureDetector(
         onTap: () {
-          Navigator.of(context).pushNamed(nextHop, arguments: {
-            'type': idOfScreen,
-            'title': titleOfScreen,
+          Navigator.of(context).pushNamed(_nextHop, arguments: {
+            'type': _typeOfMainScreen,
+            'title': _titleOfScreen,
           },);
         },
         child: Card(
@@ -98,7 +100,7 @@ class _ItemMenuState extends State<ItemMenu> {
                 Expanded(
                   child: Container(
                     child: Image.asset(
-                      image,
+                      _image,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -107,7 +109,7 @@ class _ItemMenuState extends State<ItemMenu> {
                   height: 12,
                 ),
                 Text(
-                  title,
+                  _title,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.title,
                 ),

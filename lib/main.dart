@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_kiosk/helpers/custom_route.dart';
+import 'package:smart_kiosk/providers/cart.dart';
 import 'package:smart_kiosk/providers/kiosks.dart';
 import 'package:smart_kiosk/providers/products.dart';
 import 'package:smart_kiosk/providers/reservations.dart';
@@ -19,7 +20,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  MaterialColor primaryColorShades = MaterialColor(
+  MaterialColor _primaryColorShades = MaterialColor(
     0xFF181861,
     <int, Color>{
       50: Color(0xFFA4A4BF),
@@ -48,6 +49,9 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider.value(
           value: Products(),
         ),
+        ChangeNotifierProvider.value(
+          value: Cart(),
+        ),
 //        ChangeNotifierProxyProvider<Auth, Products>(
 //          builder: (ctx, auth, previousProducts) => Products(
 //            auth.token,
@@ -59,7 +63,7 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         title: 'Shop Kiosk',
         theme: ThemeData(
-          primarySwatch: primaryColorShades,
+          primarySwatch: _primaryColorShades,
           accentColor: Colors.amber,
           canvasColor: Color.fromRGBO(255, 254, 229, 1),
           fontFamily: 'Raleway',
@@ -96,6 +100,7 @@ class _MyAppState extends State<MyApp> {
               ReservationDetailsScreen(),
           KioskScreen.routeName: (ctx) => KioskScreen(),
           ProductsListScreen.routeName: (ctx) => ProductsListScreen(),
+          FirstScreen.routeName: (ctx) => FirstScreen(),
         },
       ),
     );

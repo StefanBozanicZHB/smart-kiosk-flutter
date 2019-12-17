@@ -4,9 +4,9 @@ import 'package:smart_kiosk/screens/reservation_details_screen.dart';
 import '../providers/reservations.dart' as ord;
 
 class ReservationItemWidget extends StatefulWidget {
-  final ord.ReservatioItem reservation;
+  final ord.ReservatioItem _reservation;
 
-  ReservationItemWidget(this.reservation);
+  ReservationItemWidget(this._reservation);
 
   @override
   _ReservationItemWidgetState createState() => _ReservationItemWidgetState();
@@ -17,7 +17,7 @@ class _ReservationItemWidgetState extends State<ReservationItemWidget> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        Navigator.of(context).pushNamed(ReservationDetailsScreen.routeName, arguments: widget.reservation.id);
+        Navigator.of(context).pushNamed(ReservationDetailsScreen.routeName, arguments: widget._reservation.id);
       },
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
@@ -26,24 +26,24 @@ class _ReservationItemWidgetState extends State<ReservationItemWidget> {
         ),
         elevation: 4,
         child: Container(
-          margin: EdgeInsets.symmetric(vertical: 5),
-          padding: EdgeInsets.symmetric(vertical: 7, horizontal: 10),
+          margin: const EdgeInsets.symmetric(vertical: 5),
+          padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 10),
           child: Column(
             children: <Widget>[
               Row(
                 children: <Widget>[
                   Expanded(
                     child: Text(
-                      '${widget.reservation.kioskName}',
-                      style: TextStyle(
+                      '${widget._reservation.kioskName}',
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                   Icon(
-                    widget.reservation.icon,
-                    color: widget.reservation.color,
+                    widget._reservation.icon,
+                    color: widget._reservation.color,
                     size: 24.0,
                   ),
                 ],
@@ -55,36 +55,36 @@ class _ReservationItemWidgetState extends State<ReservationItemWidget> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          '${widget.reservation.price} RSD',
-                          style: TextStyle(
+                          '${widget._reservation.price} RSD',
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
-                          '${widget.reservation.paymentMethod.toUpperCase()}',
-                          style: TextStyle(
+                          '${widget._reservation.paymentMethod.toUpperCase()}',
+                          style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Text('${widget.reservation.timeLastChange}')
+                        Text('${widget._reservation.timeLastChange}')
                       ],
                     ),
                   ),
                   Flexible(
                     fit: FlexFit.tight,
                     child: Text(
-                      '${widget.reservation.statusMessage}',
+                      '${widget._reservation.statusMessage}',
                       textAlign: TextAlign.right,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 10,
                         fontStyle: FontStyle.italic,
                       ),
                     ),
                   ),
-                  widget.reservation.reservationStatusId == 3
-                      ? IconForResending(widget.reservation.id)
+                  widget._reservation.reservationStatusId == 3
+                      ? IconForResending(widget._reservation.id)
                       : Text('')
                 ],
               ),
@@ -113,7 +113,7 @@ class _IconForResendingState extends State<IconForResending> {
     return _isLoading
         ? CircularProgressIndicator()
         : IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.refresh,
               color: Colors.red,
               size: 35,
@@ -134,27 +134,27 @@ class _IconForResendingState extends State<IconForResending> {
                     _isLoading = false;
                   });
 
-                  var message;
+                  var _message;
                   if (response.success) {
-                    message =
+                    _message =
                         'Success send reservation. Code: ${response.orderCode}';
                   } else {
-                    message = 'Something is wrong!';
+                    _message = 'Something is wrong!';
                   }
-                  print(message);
+                  print(_message);
 
                   showDialog(
                     context: context,
                     builder: (ctx) => AlertDialog(
-                      title: Text('Reservation'),
+                      title: const Text('Reservation'),
                       content:
-                          Text(message),
+                          Text(_message),
                       actions: <Widget>[
                         FlatButton(
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: Text('Okey')),
+                            child: const Text('Okey')),
                       ],
                     ),
                   );

@@ -4,53 +4,20 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:smart_kiosk/helpers/additional_%20functions.dart';
-
-enum typeOfMainSceen {
-  byLocation,
-  byName,
-  byStreet,
-  byFavorite,
-}
-
-class KioskItem {
-  int id;
-  String name;
-  String streetName;
-  String streetNumber;
-  double latitude;
-  double longitude;
-  int cityId;
-  String createdAt;
-  String updatedAt;
-  bool isFavourite;
-  double distanceBetweenKioskAndCurrentLocation;
-
-  KioskItem({
-    this.id,
-    this.name,
-    this.streetName,
-    this.streetNumber,
-    this.latitude,
-    this.longitude,
-    this.cityId,
-    this.createdAt,
-    this.updatedAt,
-    this.isFavourite,
-    this.distanceBetweenKioskAndCurrentLocation,
-  });
-}
+import 'package:smart_kiosk/models/kiosk.dart';
 
 class Kiosks with ChangeNotifier {
-  List<KioskItem> _allKiosks = [];
-  List<KioskItem> _shownKiosks = [];
-  List<KioskItem> _favoriteKiosk = [];
+  List<Kiosk> _allKiosks = [];
+  List<Kiosk> _shownKiosks = [];
+  List<Kiosk> _favoriteKiosk = [];
+  Kiosk currentKiosk;
   var userId;
 
-  List<KioskItem> get kiosks {
+  List<Kiosk> get kiosks {
     return [..._shownKiosks];
   }
 
-  List<KioskItem> get kiosksFavorite {
+  List<Kiosk> get kiosksFavorite {
     return [..._shownKiosks.where((item)=>item.isFavourite)];
   }
 
@@ -59,7 +26,7 @@ class Kiosks with ChangeNotifier {
 
     try {
       final response = await http.get(url);
-      final List<KioskItem> _loadingKiosks = [];
+      final List<Kiosk> _loadingKiosks = [];
       final extractedData = json.decode(response.body);
 
 
@@ -74,7 +41,7 @@ class Kiosks with ChangeNotifier {
           if (kioskData['id'] == favoriteKiosk.id) isFavourite = true;
         });
 
-        _loadingKiosks.add(KioskItem(
+        _loadingKiosks.add(Kiosk(
           id: kioskData['id'],
           name: kioskData['name'],
           streetName: kioskData['location_street'],
@@ -104,7 +71,7 @@ class Kiosks with ChangeNotifier {
 
     try {
       final response = await http.get(url);
-      final List<KioskItem> _loadingKiosks = [];
+      final List<Kiosk> _loadingKiosks = [];
       final extractedData = json.decode(response.body);
 
       if (extractedData == null) {
@@ -112,7 +79,7 @@ class Kiosks with ChangeNotifier {
       }
 
       extractedData.forEach((kioskData) {
-        _loadingKiosks.add(KioskItem(
+        _loadingKiosks.add(Kiosk(
           id: kioskData['id'],
           name: kioskData['name'],
           streetName: kioskData['location_street'],
@@ -136,21 +103,21 @@ class Kiosks with ChangeNotifier {
   }
 
   filteringKiosk(String content, type) {
-    List<KioskItem> _filteringKiosks = [];
+    List<Kiosk> _filteringKiosks = [];
 
-    if (type == typeOfMainSceen.byName) {
+    if (type == MainMenu.byName) {
       _allKiosks.forEach((kiosks) {
         if (kiosks.name.toLowerCase().contains(content.toLowerCase())) {
           _filteringKiosks.add(kiosks);
         }
       });
-    } else if (type == typeOfMainSceen.byStreet) {
+    } else if (type == MainMenu.byStreet) {
       _allKiosks.forEach((kiosks) {
         if (kiosks.streetName.toLowerCase().contains(content.toLowerCase())) {
           _filteringKiosks.add(kiosks);
         }
       });
-    } else if (type == typeOfMainSceen.byFavorite) {
+    } else if (type == MainMenu.byFavorite) {
       _allKiosks.forEach((kiosks) {
         if (kiosks.isFavourite) {
           if (kiosks.name.toLowerCase().contains(content.toLowerCase())) {

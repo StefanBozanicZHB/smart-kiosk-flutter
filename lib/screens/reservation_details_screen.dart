@@ -6,7 +6,7 @@ import 'package:smart_kiosk/providers/reservations.dart';
 import 'package:smart_kiosk/widgets/image_widget.dart';
 
 class ReservationDetailsScreen extends StatelessWidget {
-  static const routeName = '/reservation-details-screen';
+  static const routeName = '/reservation-details';
   static const widthForChangingOrientation = 400;
 
   @override

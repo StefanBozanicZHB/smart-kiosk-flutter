@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_kiosk/helpers/additional_%20functions.dart';
+import 'package:smart_kiosk/helpers/badge.dart';
+import 'package:smart_kiosk/models/kiosk.dart';
+import 'package:smart_kiosk/models/product.dart';
+import 'package:smart_kiosk/providers/cart.dart';
 import 'package:smart_kiosk/providers/kiosks.dart';
 import 'package:smart_kiosk/providers/products.dart';
-import 'package:smart_kiosk/providers/products.dart' as prefix0;
+import 'package:smart_kiosk/screens/cart_screen.dart';
+import 'package:smart_kiosk/screens/first_screen.dart';
 import 'package:smart_kiosk/widgets/product_item_widget.dart';
 
 class ProductsListScreen extends StatefulWidget {
@@ -25,22 +31,36 @@ class _ProductsListScreenState extends State<ProductsListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    KioskItem kiosk = ModalRoute.of(context).settings.arguments;
+    Kiosk _kiosk = ModalRoute.of(context).settings.arguments;
 
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
           bottom: TabBar(tabs: [
-            Tab(text: 'CASH',),
-            Tab(text: 'CARD',),
+            const Tab(text: 'CASH',),
+            const Tab(text: 'CARD',),
           ]),
-          title: Text('${kiosk.name}'),
+          title: Text('${_kiosk.name}'),
+          actions: <Widget>[
+            Consumer<Cart>(
+              builder: (_, cart, ch) => Badge(
+                child: ch,
+                value: cart.cartCount.toString(),
+              ),
+              child: IconButton(
+                icon: Icon(Icons.shopping_cart),
+                onPressed: () {
+                  Navigator.of(context).pushNamed(FirstScreen.routeName, arguments: CartScreen.routeName);
+                },
+              ),
+            ),
+          ],
         ),
         body: TabBarView(
           children: <Widget>[
-            cashWidget(kiosk.id, typeOfPaymentMethod.cash),
-            cashWidget(kiosk.id, typeOfPaymentMethod.card),
+            cashWidget(_kiosk.id, PaymentMethod.cash),
+            cashWidget(_kiosk.id, PaymentMethod.card),
           ],
         ),
       ),
@@ -57,16 +77,16 @@ class _ProductsListScreenState extends State<ProductsListScreen> {
           );
         } else {
           if (dataSnapshot.error != null) {
-            return Center(
+            return const Center(
               child: Text('An error occurred!'),
             );
           } else {
-            return paymentMethod == typeOfPaymentMethod.card
+            return paymentMethod == PaymentMethod.card
                 ? Consumer<Products>(
                     builder: (ctx, produtsData, chield) => produtsData
                                 .productsCard.length ==
                             0
-                        ? Center(
+                        ? const Center(
                             child: Text('No Products'),
                           )
                         : GridView.builder(
@@ -87,7 +107,7 @@ class _ProductsListScreenState extends State<ProductsListScreen> {
                     builder: (ctx, produtsData, chield) => produtsData
                                 .productsCash.length ==
                             0
-                        ? Center(
+                        ? const Center(
                             child: Text('No Products'),
                           )
                         : GridView.builder(

@@ -7,6 +7,7 @@ class ImageWidget extends StatelessWidget {
   final imageUrl;
   final assetAddressPlaceHolder;
   final assetAddressError;
+  final BoxFit boxFit;
 
   ImageWidget({
     @required this.imageUrl,
@@ -14,6 +15,7 @@ class ImageWidget extends StatelessWidget {
     this.height = 100.0,
     this.assetAddressError = 'assets/images/no_product_image.jpg',
     this.assetAddressPlaceHolder = 'assets/gif/loading_gif.gif',
+    this.boxFit = BoxFit.cover,
   });
 
   @override
@@ -21,15 +23,16 @@ class ImageWidget extends StatelessWidget {
     return CachedNetworkImage(
       height: height,
       width: width,
-      fit: BoxFit.cover,
+      fit: boxFit,
       imageUrl: imageUrl,
       placeholder: (context, url) =>
       new Container(
           height: height,
           width: width,
+          padding: EdgeInsets.all(20),
           child: Image.asset(
             assetAddressPlaceHolder,
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
           )),
       errorWidget: (context, url, error) =>
           Container(
@@ -37,7 +40,7 @@ class ImageWidget extends StatelessWidget {
               width: width,
               child: Image.asset(
                 assetAddressError,
-              fit: BoxFit.cover,
+              fit: boxFit,
               )),
     );
   }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_kiosk/helpers/additional_%20functions.dart';
+import 'package:smart_kiosk/models/kiosk.dart';
 import 'package:smart_kiosk/providers/kiosks.dart';
 import 'package:smart_kiosk/widgets/kiosk_item_widget.dart';
 
@@ -17,10 +19,10 @@ class _KioskScreenState extends State<KioskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final routeArguments =
+    final _routeArguments =
         ModalRoute.of(context).settings.arguments as Map<dynamic, dynamic>;
-    final type = routeArguments['type'];
-    final title = routeArguments['title'];
+    final _type = _routeArguments['type'];
+    final _title = _routeArguments['title'];
 
     return Scaffold(
       appBar: AppBar(
@@ -37,15 +39,15 @@ class _KioskScreenState extends State<KioskScreen> {
                       autofocus: true,
                       onChanged: (text) {
                         Provider.of<Kiosks>(context, listen: false)
-                            .filteringKiosk(text, type);
+                            .filteringKiosk(text, _type);
                       },
                       textInputAction: TextInputAction.go,
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: title,
-                        hintStyle: TextStyle(color: Colors.white, fontSize: 12),
+                        hintText: _title,
+                        hintStyle: const TextStyle(color: Colors.white, fontSize: 12),
                       ),
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
                     );
                   } else {
                     _cusIcon = Icon(Icons.search);
@@ -63,14 +65,14 @@ class _KioskScreenState extends State<KioskScreen> {
               : null,
           builder: (ctx, dataSnapshot) {
             if (dataSnapshot.connectionState == ConnectionState.waiting) {
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator(),
               );
             } else {
               if (dataSnapshot.error != null) {
                 return textOnCenter(content: 'An error occurred!');
               } else {
-                return type != typeOfMainSceen.byFavorite
+                return _type != MainMenu.byFavorite
                     ? Consumer<Kiosks>(
                         builder: (ctx, kioskData, child) => kioskData
                                     .kiosks.length ==

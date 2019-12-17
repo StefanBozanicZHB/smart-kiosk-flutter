@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_kiosk/models/kiosk.dart';
 import 'package:smart_kiosk/providers/kiosks.dart';
 import 'package:smart_kiosk/screens/products_list_screen.dart';
 
 class KioskItemWidget extends StatelessWidget {
-  final KioskItem kiosk;
+  final Kiosk kiosk;
 
   KioskItemWidget(this.kiosk);
 
@@ -12,6 +13,7 @@ class KioskItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        Provider.of<Kiosks>(context, listen: false).currentKiosk = kiosk;
         Navigator.of(context).pushNamed(ProductsListScreen.routeName, arguments: kiosk);
       },
       child: Card(

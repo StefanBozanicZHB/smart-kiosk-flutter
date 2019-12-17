@@ -1,4 +1,4 @@
-import 'package:smart_kiosk/models/Product.dart';
+import 'package:smart_kiosk/models/product.dart';
 
 class ResponseReservationDetails {
   final int id;

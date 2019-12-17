@@ -6,9 +6,9 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:smart_kiosk/helpers/additional_%20functions.dart';
 import 'package:smart_kiosk/helpers/http_exception.dart';
-import 'package:smart_kiosk/models/Product.dart';
-import 'package:smart_kiosk/models/ResponseReservation.dart';
-import 'package:smart_kiosk/models/ResponseReservationDetails.dart';
+import 'package:smart_kiosk/models/product.dart';
+import 'package:smart_kiosk/models/response_reservation.dart';
+import 'package:smart_kiosk/models/response_reservation_details.dart';
 
 class ReservatioItem {
   final int id;
