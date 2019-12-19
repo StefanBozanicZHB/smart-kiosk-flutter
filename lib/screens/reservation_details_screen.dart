@@ -180,11 +180,11 @@ class ReservationDetailsScreen extends StatelessWidget {
               ),
             ),
             Text(
-                '${reservation.reservationDetails.paymentMethod.toUpperCase()}'),
+                '${reservation.reservationDetails.paymentMethodString.toUpperCase()}'),
             const SizedBox(
               width: 5,
             ),
-            reservation.reservationDetails.paymentMethod == 'cash'
+            reservation.reservationDetails.paymentMethodString == 'cash'
                 ? Icon(Icons.monetization_on)
                 : Icon(Icons.credit_card)
           ],
@@ -273,7 +273,8 @@ class ReservationDetailsScreen extends StatelessWidget {
               ],
             ),
             Expanded(
-              child: Padding(
+              child:
+              Padding(
                 padding: const EdgeInsets.all(10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

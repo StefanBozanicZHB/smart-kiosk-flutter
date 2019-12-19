@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_kiosk/helpers/additional_%20functions.dart';
 import 'package:smart_kiosk/models/kiosk.dart';
@@ -45,7 +46,8 @@ class _KioskScreenState extends State<KioskScreen> {
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: _title,
-                        hintStyle: const TextStyle(color: Colors.white, fontSize: 12),
+                        hintStyle:
+                            const TextStyle(color: Colors.white, fontSize: 12),
                       ),
                       style: const TextStyle(color: Colors.white, fontSize: 16),
                     );
@@ -74,26 +76,38 @@ class _KioskScreenState extends State<KioskScreen> {
               } else {
                 return _type != MainMenu.byFavorite
                     ? Consumer<Kiosks>(
-                        builder: (ctx, kioskData, child) => kioskData
-                                    .kiosks.length ==
-                                0
-                            ? textOnCenter()
-                            : ListView.builder(
-                                itemCount: kioskData.kiosks.length,
-                                itemBuilder: (ctx, index) =>
-                                    KioskItemWidget(kioskData.kiosks[index]),
-                              ),
+                        builder: (ctx, kioskData, child) =>
+                            kioskData.kiosks.length == 0
+                                ? textOnCenter()
+                                : AnimationLimiter(
+                                    child: ListView.builder(
+                                      itemCount: kioskData.kiosks.length,
+                                      itemBuilder: (ctx, index) =>
+                                          AnimationConfiguration.staggeredList(
+                                        position: index,
+                                        duration: Duration(milliseconds: 375),
+                                        child: SlideAnimation(
+                                          verticalOffset: 50.0,
+                                          child: FadeInAnimation(
+                                            child: KioskItemWidget(
+                                                kioskData.kiosks[index]),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                       )
                     : Consumer<Kiosks>(
-                  builder: (ctx, kioskData, child) => kioskData
-                      .kiosksFavorite.length == 0
-                      ? textOnCenter()
-                      : ListView.builder(
-                    itemCount: kioskData.kiosksFavorite.length,
-                    itemBuilder: (ctx, index) =>
-                        KioskItemWidget(kioskData.kiosksFavorite[index]),
-                  ),
-                );
+                        builder: (ctx, kioskData, child) =>
+                            kioskData.kiosksFavorite.length == 0
+                                ? textOnCenter()
+                                : ListView.builder(
+                                    itemCount: kioskData.kiosksFavorite.length,
+                                    itemBuilder: (ctx, index) =>
+                                        KioskItemWidget(
+                                            kioskData.kiosksFavorite[index]),
+                                  ),
+                      );
               }
             }
           }),
@@ -101,7 +115,7 @@ class _KioskScreenState extends State<KioskScreen> {
   }
 }
 
-Widget textOnCenter({String content = 'No Data!'}){
+Widget textOnCenter({String content = 'No Data!'}) {
   return Center(
     child: Text(content),
   );

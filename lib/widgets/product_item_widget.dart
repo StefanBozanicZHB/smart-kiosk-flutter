@@ -83,7 +83,7 @@ class ProductItemWidget extends StatelessWidget {
                           ? null
                           : () {
                               _quantityInCart--;
-                              _cart.detractCart(_product, _quantityInCart);
+                              _cart.detractCart(_product.id, _quantityInCart);
                             },
                       iconSize: 35,
                       icon: const Icon(Icons.remove_circle),
@@ -160,10 +160,12 @@ class ProductItemWidget extends StatelessWidget {
       ),
     );
   }
+
+  _showSnackBar(context, content) {
+    Scaffold.of(context).hideCurrentSnackBar();
+    final snackBar = SnackBar(content: Text('$content'));
+    Scaffold.of(context).showSnackBar(snackBar);
+  }
 }
 
-_showSnackBar(context, content) {
-  Scaffold.of(context).hideCurrentSnackBar();
-  final snackBar = SnackBar(content: Text('$content'));
-  Scaffold.of(context).showSnackBar(snackBar);
-}
+

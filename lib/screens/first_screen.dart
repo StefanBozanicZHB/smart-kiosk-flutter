@@ -110,27 +110,3 @@ class _FirstScreenState extends State<FirstScreen> {
     );
   }
 }
-
-List<Widget> actionWidgetForCart() {
-  Consumer<Cart>(builder: (ctx, cartData, child) {
-    if (!cartData.cart.isEmpty) {
-      return Row(
-        children: <Widget>[
-          IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: () {
-              print('delete');
-            },
-          )
-        ],
-      );
-
-//          IconButton(
-//            icon: Icon(Icons.send),
-//            onPressed: () {
-//              print('send');
-//            },
-//    )
-    }
-  });
-}
