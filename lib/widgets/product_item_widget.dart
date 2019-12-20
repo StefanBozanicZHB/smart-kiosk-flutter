@@ -99,7 +99,7 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
                       onPressed: _quantityInCart == 0
                           ? null
                           : () {
-                              rotationController.forward(from: 0.0);
+                              rotationController.reverse(from: 1.0);
                               _cart.detractCart(
                                   widget._product.id, _quantityInCart-1);
                             },
