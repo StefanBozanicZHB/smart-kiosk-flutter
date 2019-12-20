@@ -18,6 +18,8 @@ class _KioskScreenState extends State<KioskScreen> {
   Widget _cusSearchBar = Text('Kiosk sreach');
   bool _isLoading = false;
 
+  int indexMain = 0;
+
   @override
   Widget build(BuildContext context) {
     final _routeArguments =
@@ -85,10 +87,12 @@ class _KioskScreenState extends State<KioskScreen> {
                                       itemBuilder: (ctx, index) =>
                                           AnimationConfiguration.staggeredList(
                                         position: index,
-                                        duration: Duration(milliseconds: 375),
+                                        duration: AdditionalFunctions
+                                            .DURACTION_ANIMATION_LIST_VIEW_MILLISECONDS,
                                         child: SlideAnimation(
-                                          verticalOffset: 50.0,
-                                          child: FadeInAnimation(
+                                          verticalOffset: AdditionalFunctions
+                                              .VERTICAL_OFF_SET_ANIMATION,
+                                          child: ScaleAnimation(
                                             child: KioskItemWidget(
                                                 kioskData.kiosks[index]),
                                           ),
@@ -98,25 +102,39 @@ class _KioskScreenState extends State<KioskScreen> {
                                   ),
                       )
                     : Consumer<Kiosks>(
-                        builder: (ctx, kioskData, child) =>
-                            kioskData.kiosksFavorite.length == 0
-                                ? textOnCenter()
-                                : ListView.builder(
-                                    itemCount: kioskData.kiosksFavorite.length,
-                                    itemBuilder: (ctx, index) =>
-                                        KioskItemWidget(
+                        builder: (ctx, kioskData, child) => kioskData
+                                    .kiosksFavorite.length ==
+                                0
+                            ? textOnCenter()
+                            : AnimationLimiter(
+                                child: ListView.builder(
+                                  itemCount: kioskData.kiosksFavorite.length,
+                                  itemBuilder: (ctx, index) =>
+                                      AnimationConfiguration.staggeredList(
+                                    position: index,
+                                    duration: AdditionalFunctions
+                                        .DURACTION_ANIMATION_LIST_VIEW_MILLISECONDS,
+                                    child: SlideAnimation(
+                                      verticalOffset: AdditionalFunctions
+                                          .VERTICAL_OFF_SET_ANIMATION,
+                                      child: ScaleAnimation(
+                                        child: KioskItemWidget(
                                             kioskData.kiosksFavorite[index]),
+                                      ),
+                                    ),
                                   ),
+                                ),
+                              ),
                       );
               }
             }
           }),
     );
   }
-}
 
-Widget textOnCenter({String content = 'No Data!'}) {
-  return Center(
-    child: Text(content),
-  );
+  Widget textOnCenter({String content = 'No Data!'}) {
+    return Center(
+      child: Text(content),
+    );
+  }
 }

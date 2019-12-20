@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_kiosk/helpers/additional_%20functions.dart';
 import 'package:smart_kiosk/helpers/badge.dart';
@@ -20,13 +21,14 @@ class ProductsListScreen extends StatefulWidget {
 
 class _ProductsListScreenState extends State<ProductsListScreen> {
   bool _isLoading = false;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   Future<void> _sendRequestForLoadingData(kioskId) async {
     await Provider.of<Products>(context, listen: false)
         .fetchAndSetProducts(kioskId);
-//    setState(() {
-//      _isLoading = true;
-//    });
+    setState(() {
+      _isLoading = true;
+    });
   }
 
   @override
@@ -36,10 +38,15 @@ class _ProductsListScreenState extends State<ProductsListScreen> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           bottom: TabBar(tabs: [
-            const Tab(text: 'CASH',),
-            const Tab(text: 'CARD',),
+            const Tab(
+              text: 'CASH',
+            ),
+            const Tab(
+              text: 'CARD',
+            ),
           ]),
           title: Text('${_kiosk.name}'),
           actions: <Widget>[
@@ -51,7 +58,9 @@ class _ProductsListScreenState extends State<ProductsListScreen> {
               child: IconButton(
                 icon: Icon(Icons.shopping_cart),
                 onPressed: () {
-                  Navigator.of(context).pushNamed(FirstScreen.routeName, arguments: CartScreen.routeName);
+                  _scaffoldKey.currentState.hideCurrentSnackBar();
+                  Navigator.of(context).pushNamed(FirstScreen.routeName,
+                      arguments: CartScreen.routeName);
                 },
               ),
             ),
@@ -59,15 +68,15 @@ class _ProductsListScreenState extends State<ProductsListScreen> {
         ),
         body: TabBarView(
           children: <Widget>[
-            cashWidget(_kiosk.id, PaymentMethod.cash),
-            cashWidget(_kiosk.id, PaymentMethod.card),
+            tabWidget(_kiosk.id, PaymentMethod.cash),
+            tabWidget(_kiosk.id, PaymentMethod.card),
           ],
         ),
       ),
     );
   }
 
-  Widget cashWidget(kioskId, paymentMethod) {
+  Widget tabWidget(kioskId, paymentMethod) {
     return FutureBuilder(
       future: !_isLoading ? _sendRequestForLoadingData(kioskId) : null,
       builder: (ctx, dataSnapshot) {
@@ -78,51 +87,75 @@ class _ProductsListScreenState extends State<ProductsListScreen> {
         } else {
           if (dataSnapshot.error != null) {
             return const Center(
-              child: Text('An error occurred!'),
+              child: const Text('An error occurred!'),
             );
           } else {
             return paymentMethod == PaymentMethod.card
                 ? Consumer<Products>(
-                    builder: (ctx, produtsData, chield) => produtsData
-                                .productsCard.length ==
-                            0
-                        ? const Center(
-                            child: Text('No Products'),
-                          )
-                        : GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: 250,
-                              childAspectRatio: 0.8,
-                              mainAxisSpacing: 3,
-                              crossAxisSpacing: 3,
-                            ),
-                            itemCount: produtsData.productsCard.length,
-                            physics: AlwaysScrollableScrollPhysics(),
-                            itemBuilder: (ctx, index) =>
-                                ProductItemWidget(produtsData.productsCard[index]),
-                          ),
+                    builder: (ctx, produtsData, chield) =>
+                        produtsData.productsCard.length == 0
+                            ? const Center(
+                                child: const Text('No Products'),
+                              )
+                            : AnimationLimiter(
+                                child: GridView.builder(
+                                  gridDelegate:
+                                      SliverGridDelegateWithMaxCrossAxisExtent(
+                                    maxCrossAxisExtent: 250,
+                                    childAspectRatio: 0.8,
+                                    mainAxisSpacing: 3,
+                                    crossAxisSpacing: 3,
+                                  ),
+                                  itemCount: produtsData.productsCard.length,
+                                  physics: AlwaysScrollableScrollPhysics(),
+                                  itemBuilder: (ctx, index) =>
+                                      AnimationConfiguration.staggeredGrid(
+                                    position: index,
+                                    duration: AdditionalFunctions
+                                        .DURACTION_ANIMATION_LIST_VIEW_MILLISECONDS,
+                                    columnCount: 2,
+                                    child: ScaleAnimation(
+                                      child: FadeInAnimation(
+                                        child: ProductItemWidget(
+                                            produtsData.productsCard[index]),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                   )
                 : Consumer<Products>(
-                    builder: (ctx, produtsData, chield) => produtsData
-                                .productsCash.length ==
-                            0
-                        ? const Center(
-                            child: Text('No Products'),
-                          )
-                        : GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: 250,
-                              childAspectRatio: 0.8,
-                              mainAxisSpacing: 3,
-                              crossAxisSpacing: 3,
-                            ),
-                            itemCount: produtsData.productsCash.length,
-                            physics: AlwaysScrollableScrollPhysics(),
-                            itemBuilder: (ctx, index) =>
-                                ProductItemWidget(produtsData.productsCash[index]),
-                          ),
+                    builder: (ctx, produtsData, chield) =>
+                        produtsData.productsCash.length == 0
+                            ? const Center(
+                                child: const Text('No Products'),
+                              )
+                            : AnimationLimiter(
+                                child: GridView.builder(
+                                  gridDelegate:
+                                      SliverGridDelegateWithMaxCrossAxisExtent(
+                                    maxCrossAxisExtent: 250,
+                                    childAspectRatio: 0.8,
+                                    mainAxisSpacing: 3,
+                                    crossAxisSpacing: 3,
+                                  ),
+                                  itemCount: produtsData.productsCash.length,
+                                  physics: AlwaysScrollableScrollPhysics(),
+                                  itemBuilder: (ctx, index) =>
+                                      AnimationConfiguration.staggeredGrid(
+                                    position: index,
+                                    duration: AdditionalFunctions
+                                        .DURACTION_ANIMATION_LIST_VIEW_MILLISECONDS,
+                                    columnCount: 2,
+                                    child: ScaleAnimation(
+                                      child: FadeInAnimation(
+                                        child: ProductItemWidget(
+                                            produtsData.productsCash[index]),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                   );
           }
         }

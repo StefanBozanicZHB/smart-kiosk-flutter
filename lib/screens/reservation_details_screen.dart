@@ -1,19 +1,25 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_kiosk/helpers/additional_%20functions.dart';
 import 'package:smart_kiosk/helpers/http_exception.dart';
 import 'package:smart_kiosk/providers/reservations.dart';
 import 'package:smart_kiosk/widgets/image_widget.dart';
 
-class ReservationDetailsScreen extends StatelessWidget {
+class ReservationDetailsScreen extends StatefulWidget {
   static const routeName = '/reservation-details';
-  static const widthForChangingOrientation = 400;
 
   @override
+  _ReservationDetailsScreenState createState() => _ReservationDetailsScreenState();
+}
+
+class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
+  @override
   Widget build(BuildContext context) {
-    final reservationId = ModalRoute.of(context).settings.arguments;
-    final reservation = Provider.of<Reservations>(context, listen: false);
-    final width = MediaQuery.of(context).size.width;
+    final _reservationId = ModalRoute.of(context).settings.arguments;
+    final _reservation = Provider.of<Reservations>(context, listen: false);
+    final _width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
@@ -22,13 +28,13 @@ class ReservationDetailsScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.delete),
             onPressed: () {
-              _alertDialogForDeleting(context, reservation, reservationId);
+              _alertDialogForDeleting(context, _reservation, _reservationId);
             },
           )
         ],
       ),
       body: FutureBuilder(
-        future: reservation.fetchAndSetReservationDetails(reservationId),
+        future: _reservation.fetchAndSetReservationDetails(_reservationId),
         builder: (ctx, dataSnapshot) {
           if (dataSnapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -42,9 +48,9 @@ class ReservationDetailsScreen extends StatelessWidget {
             } else {
               return Container(
                   margin: EdgeInsets.all(20),
-                  child: width > widthForChangingOrientation
-                      ? _landscapeLayout(reservation, width)
-                      : _portraitLayout(reservation));
+                  child: _width > AdditionalFunctions.WIDTH_FOR_CHANGING_ORIENTATION
+                      ? _landscapeLayout(_reservation, _width)
+                      : _portraitLayout(_reservation));
             }
           }
         },
@@ -143,12 +149,7 @@ class ReservationDetailsScreen extends StatelessWidget {
         const SizedBox(
           width: 20,
         ),
-        Expanded(
-          child: ListView.builder(
-            itemBuilder: (ctx, index) => _productItem(reservation, index),
-            itemCount: reservation.reservationDetails.productList.length,
-          ),
-        )
+        _listViewProducts(reservation),
       ],
     );
   }
@@ -157,14 +158,39 @@ class ReservationDetailsScreen extends StatelessWidget {
     return Column(
       children: <Widget>[
         _reservationDetailsWidget(reservation),
-        Expanded(
-          child: ListView.builder(
-            itemBuilder: (ctx, index) => _productItem(reservation, index),
-            itemCount: reservation.reservationDetails.productList.length,
-          ),
-        )
+        _listViewProducts(reservation),
       ],
     );
+  }
+
+  Widget _listViewProducts(reservation) {
+    return
+      Expanded(
+        child: AnimationLimiter(
+          child: ListView.builder(
+            itemCount: reservation.reservationDetails.productList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return AnimationConfiguration.staggeredList(
+                position: index,
+                duration: AdditionalFunctions.DURACTION_ANIMATION_LIST_VIEW_MILLISECONDS,
+                child: SlideAnimation(
+                  verticalOffset: AdditionalFunctions.VERTICAL_OFF_SET_ANIMATION,
+                  child: ScaleAnimation(
+                    child: Column(
+                      children: <Widget>[
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        _productItem(reservation, index),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      );
   }
 
   Widget _reservationDetailsWidget(reservation) {
@@ -180,11 +206,11 @@ class ReservationDetailsScreen extends StatelessWidget {
               ),
             ),
             Text(
-                '${reservation.reservationDetails.paymentMethodString.toUpperCase()}'),
+                '${reservation.reservationDetails.paymentMethod.toUpperCase()}'),
             const SizedBox(
               width: 5,
             ),
-            reservation.reservationDetails.paymentMethodString == 'cash'
+            reservation.reservationDetails.paymentMethod.toUpperCase() == 'CASH'
                 ? Icon(Icons.monetization_on)
                 : Icon(Icons.credit_card)
           ],
@@ -273,8 +299,7 @@ class ReservationDetailsScreen extends StatelessWidget {
               ],
             ),
             Expanded(
-              child:
-              Padding(
+              child: Padding(
                 padding: const EdgeInsets.all(10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

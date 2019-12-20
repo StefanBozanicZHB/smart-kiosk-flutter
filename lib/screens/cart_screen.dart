@@ -37,18 +37,39 @@ class CartScreen extends StatelessWidget {
                       itemBuilder: (BuildContext context, int index) {
                         return AnimationConfiguration.staggeredList(
                           position: index,
-                          duration: const Duration(milliseconds: 375),
+                          duration: AdditionalFunctions.DURACTION_ANIMATION_LIST_VIEW_MILLISECONDS,
                           child: SlideAnimation(
-                            verticalOffset: 50.0,
-                            child: FadeInAnimation(
-                              child: Column(
-                                children: <Widget>[
-                                  const SizedBox(
-                                    height: 10,
+                            verticalOffset: AdditionalFunctions.VERTICAL_OFF_SET_ANIMATION,
+                            child: ScaleAnimation(
+                              child: Dismissible(
+                                key: ValueKey(_cart.cart[index].id),
+                                background: Container(
+                                  color: Theme.of(context).errorColor,
+                                  child: Icon(
+                                    Icons.delete,
+                                    color: Colors.white,
+                                    size: 40,
                                   ),
-                                  _productItem(
-                                      _cart.cart[index], _cart, context),
-                                ],
+                                  alignment: Alignment.centerRight,
+                                  padding: EdgeInsets.only(right: 20),
+                                  margin: EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                    vertical: 4,
+                                  ),
+                                ),
+                                direction: DismissDirection.endToStart,
+                                onDismissed: (direction){
+                                  _cart.detractCart(_cart.cart[index].id, 0);
+                                },
+                                child: Column(
+                                  children: <Widget>[
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    _productItem(
+                                        _cart.cart[index], _cart, context),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -69,11 +90,11 @@ class CartScreen extends StatelessWidget {
         Row(
           children: <Widget>[
             AnimatedContainer(
-              duration: Duration(seconds: 1),
+              duration: const Duration(seconds: 1),
               child: Expanded(
                 child: Text(
                   '${kiosk.name}',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -82,8 +103,8 @@ class CartScreen extends StatelessWidget {
               width: 5,
             ),
             paymentMethod.toUpperCase() == 'CASH'
-                ? Icon(Icons.monetization_on)
-                : Icon(Icons.credit_card)
+                ? const Icon(Icons.monetization_on)
+                : const Icon(Icons.credit_card)
           ],
         ),
         const SizedBox(
@@ -98,7 +119,7 @@ class CartScreen extends StatelessWidget {
             child: Text(
               'Total price: $total RSD',
               textAlign: TextAlign.right,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
             )),
       ],
     );

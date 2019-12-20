@@ -36,11 +36,15 @@ class ReservatioItem {
 
 class Reservations with ChangeNotifier {
   List<ReservatioItem> _reservations = [];
-  ResponseReservationDetails reservationDetails;
+  ResponseReservationDetails _reservationDetails;
   var userId;
 
   List<ReservatioItem> get reservation {
     return [..._reservations];
+  }
+
+  ResponseReservationDetails get reservationDetails{
+    return _reservationDetails;
   }
 
   Future<void> fetchAndSetReservation() async {
@@ -55,7 +59,7 @@ class Reservations with ChangeNotifier {
         return;
       }
       extractedData.forEach((reservationData) {
-        print(reservationData);
+//        print(reservationData);
 
         var color = Colors.green;
         var icon = Icons.check;
@@ -122,7 +126,7 @@ class Reservations with ChangeNotifier {
 
 //      notifyListeners();
     } catch (error) {
-      print(error);
+      print('GRESKA: $error');
       throw (error);
     }
   }
@@ -146,8 +150,6 @@ class Reservations with ChangeNotifier {
       errorCode: extractedData['error_code'],
     );
 
-    print(reservationId);
-
     if (extractedData['success']) {
       final reservationIndex =
           _reservations.indexWhere((reserv) => reserv.id == reservationId);
@@ -155,7 +157,6 @@ class Reservations with ChangeNotifier {
       notifyListeners();
     }
 
-    print(extractedData['success']);
     return responseReservation;
   }
 
@@ -223,7 +224,7 @@ class Reservations with ChangeNotifier {
             .toList(),
       );
 
-      reservationDetails = loadedReservationDetails;
+      _reservationDetails = loadedReservationDetails;
       notifyListeners();
     } catch (error) {
       print(error);
@@ -242,10 +243,8 @@ class Reservations with ChangeNotifier {
       }
 
       if(extractedData['success'] == 'false'){
-        print('12');
         throw HttpException(extractedData['description']);
       }
-      print('23');
 
       if (response.statusCode >= 400) {
         throw HttpException('Could not delete reservation.');
