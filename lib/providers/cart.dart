@@ -15,28 +15,28 @@ class CartItem {
 }
 
 class Cart with ChangeNotifier {
-  static CartItem product = CartItem(
-    quantity: 2,
-    price: 55,
-    pictureUrl: 'asdas',
-    name: 'Coca cola',
-    id: 32,
-  );
+//  static CartItem product = CartItem(
+//    quantity: 2,
+//    price: 55,
+//    pictureUrl: 'asdas',
+//    name: 'Coca cola',
+//    id: 32,
+//  );
+//
+//  static Kiosk kioskProba = Kiosk(
+//    id: 8,
+//    name: 'Beogradski sajam',
+//    streetNumber: '14',
+//    streetName: 'Bulevar vojvode Misica',
+//  );
+//
+//  List<CartItem> _cart = [product];
+//  Kiosk _cartKiosk = kioskProba;
+//  PaymentMethod _paymentMethod = PaymentMethod.cash;
 
-  static Kiosk kioskProba = Kiosk(
-    id: 8,
-    name: 'Beogradski sajam',
-    streetNumber: '14',
-    streetName: 'Bulevar vojvode Misica',
-  );
-
-  List<CartItem> _cart = [product];
-  Kiosk _cartKiosk = kioskProba;
-  PaymentMethod _paymentMethod = PaymentMethod.cash;
-
-//  List<Product> _cart = [];
-//  Kiosk _cartKiosk;
-  //  PaymentMethod _paymentMethod;
+  List<CartItem> _cart = [];
+  Kiosk _cartKiosk;
+  PaymentMethod _paymentMethod;
 
   List<CartItem> get cart {
     return [..._cart];

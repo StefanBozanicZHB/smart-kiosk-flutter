@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,16 +10,31 @@ import 'package:smart_kiosk/providers/cart.dart';
 import 'package:smart_kiosk/providers/kiosks.dart';
 import 'package:smart_kiosk/widgets/image_widget.dart';
 
-class ProductItemWidget extends StatelessWidget {
+class ProductItemWidget extends StatefulWidget {
   final Product _product;
 
   ProductItemWidget(this._product);
 
   @override
+  _ProductItemWidgetState createState() => _ProductItemWidgetState();
+}
+
+class _ProductItemWidgetState extends State<ProductItemWidget>
+    with TickerProviderStateMixin {
+  AnimationController rotationController;
+
+  @override
+  void initState() {
+    rotationController = AnimationController(
+        duration: const Duration(milliseconds: 500), vsync: this);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final _cart = Provider.of<Cart>(context);
     final _kiosk = Provider.of<Kiosks>(context, listen: false).currentKiosk;
-    int _quantityInCart = _cart.countProductInCart(_product, _kiosk);
+    int _quantityInCart = _cart.countProductInCart(widget._product, _kiosk);
 
     return GestureDetector(
       onTap: () {},
@@ -33,7 +50,7 @@ class ProductItemWidget extends StatelessWidget {
                 Radius.circular(10),
               ),
               child: ImageWidget(
-                imageUrl: _product.pictureUrl,
+                imageUrl: widget._product.pictureUrl,
                 width: double.infinity,
                 height: double.infinity,
               ),
@@ -45,7 +62,7 @@ class ProductItemWidget extends StatelessWidget {
                 color: Colors.black54,
                 padding: EdgeInsets.symmetric(vertical: 2, horizontal: 2),
                 child: Text(
-                  '${_product.price} RSD',
+                  '${widget._product.price} RSD',
                   style: const TextStyle(
                       fontSize: 20,
                       color: Colors.white,
@@ -82,8 +99,9 @@ class ProductItemWidget extends StatelessWidget {
                       onPressed: _quantityInCart == 0
                           ? null
                           : () {
-                              _quantityInCart--;
-                              _cart.detractCart(_product.id, _quantityInCart);
+                              rotationController.forward(from: 0.0);
+                              _cart.detractCart(
+                                  widget._product.id, _quantityInCart-1);
                             },
                       iconSize: 35,
                       icon: const Icon(Icons.remove_circle),
@@ -97,9 +115,10 @@ class ProductItemWidget extends StatelessWidget {
                     ),
                     IconButton(
                       onPressed: () {
-                        _quantityInCart++;
+                        rotationController.forward(from: 0.0);
                         try {
-                          _cart.addInCart(_product, _kiosk, _quantityInCart);
+                          _cart.addInCart(
+                              widget._product, _kiosk, _quantityInCart+1);
                         } on HttpException catch (error) {
                           _showSnackBar(context, error);
                         } catch (error) {
@@ -114,31 +133,54 @@ class ProductItemWidget extends StatelessWidget {
                 ),
               ),
             ),
-            if (_quantityInCart != 0)
-              Positioned(
-                top: 49,
-                right: 10,
-                child: Container(
-                  decoration: new BoxDecoration(
-                    borderRadius:
-                        new BorderRadius.all(new Radius.circular(15.0)),
-                    color: Colors.white,
-                    border: Border.all(
-                      color: Colors.red,
-                      width: 1,
+//            if (_quantityInCart != 0)
+            Positioned(
+              top: 49,
+              right: 10,
+              child: Container(
+                decoration: new BoxDecoration(
+                  borderRadius: new BorderRadius.all(new Radius.circular(15.0)),
+                  color: _quantityInCart != 0 ? Colors.white : null,
+                  border: _quantityInCart != 0
+                      ? Border.all(
+                          color: Colors.red,
+                          width: 1,
+                        )
+                      : null,
+                ),
+                padding:
+                    new EdgeInsets.only(left: 6, right: 6, top: 0, bottom: 2),
+                child: RotationTransition(
+                  turns:
+                      Tween(begin: 0.0, end: 1.0).animate(rotationController),
+                  child: AnimatedDefaultTextStyle(
+                    style: _quantityInCart == 0
+                        ? TextStyle(
+                            fontSize: 0,
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold)
+                        : _quantityInCart == 1
+                            ? TextStyle(
+                                fontSize: 16,
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold)
+                            : _quantityInCart == 2
+                                ? TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold)
+                                : TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold),
+                    duration: Duration(milliseconds: 300),
+                    child: Text(
+                      '$_quantityInCart',
                     ),
-                  ),
-                  padding:
-                      new EdgeInsets.only(left: 6, right: 6, top: 0, bottom: 2),
-                  child: Text(
-                    '$_quantityInCart',
-                    style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
+            ),
             Positioned(
               bottom: 10,
               right: 50,
@@ -147,7 +189,7 @@ class ProductItemWidget extends StatelessWidget {
                 color: Colors.black45,
                 padding: EdgeInsets.symmetric(vertical: 2, horizontal: 2),
                 child: Text(
-                  '${_product.name}',
+                  '${widget._product.name}',
                   style: const TextStyle(fontSize: 18, color: Colors.white),
                   softWrap: true,
                   textAlign: TextAlign.right,
@@ -167,5 +209,3 @@ class ProductItemWidget extends StatelessWidget {
     Scaffold.of(context).showSnackBar(snackBar);
   }
 }
-
-
